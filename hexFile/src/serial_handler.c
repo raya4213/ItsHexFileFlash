@@ -1,6 +1,7 @@
 #include "serial_handler.h"
 
 uint8_t user_handle_command(char* command_word, char* command_args) __attribute__((weak));
+uint8_t user_handle_command_wrapper(char* command_word, char* command_args) __attribute__((section(".WRAPPERFUNCS")));
 
 void handle_serial_command(char* command, uint16_t command_length){
 	if(command[0]!='\0'){ //Not much to handle if we get an empty string.
@@ -33,10 +34,31 @@ void handle_serial_command(char* command, uint16_t command_length){
 		else if(strcmp_P(command_word,PSTR("print_motor_settings"))==0){
 																		print_motor_values();
 																		print_dist_per_step();																	
-		}else if(user_handle_command){ //First, make sure the function is defined
-			if(!user_handle_command(command_word, command_args))	printf_P(CMD_NOT_RECOGNIZED_STR,command_word);
 		}
+		else if(strcmp_P(command_word,PSTR("r_start"))==0)	reprogramming = 1;
+		else if(strcmp_P(command_word,PSTR("r_end"))==0){
+			reprogramming = 0;
+			droplet_reboot();
+		}else if(strcmp_P(command_word,PSTR("reprog_begin"))==0){
+			//delay_ms(1000);
+			ir_cmd(ALL_DIRS, "r_start", 7);
+		}else if(strcmp_P(command_word,PSTR("reprog_end"))==0){\
+			ir_cmd(ALL_DIRS, "r_end", 5);	
+		}else if(command_word[0]=='!' && command_word[1]==0)
+		{
+			strcpy(data_pointer, command_args);
+			schedule_task(20, send_code_packet, NULL);
+		}
+		else if(!user_handle_command_wrapper(command_word, command_args))	printf_P(CMD_NOT_RECOGNIZED_STR,command_word);
 		else														printf_P(CMD_NOT_RECOGNIZED_STR,command_word);
+	}
+}
+
+uint8_t user_handle_command_wrapper(char* command_word, char* command_args){
+	if(user_handle_command){
+		return user_handle_command(command_word, command_args);
+	}else{
+		return 1;	
 	}
 }
 

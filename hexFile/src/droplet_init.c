@@ -35,19 +35,74 @@ void init_all_systems()
 	#endif
 
 	set_all_ir_powers(256);
-
-	startup_light_sequence();
 	
+	reprogramming = 0;
+	
+	startup_light_sequence();
+
 	ir_comm_init();				INIT_DEBUG_PRINT("IR COM INIT\r\n");
 }
+
+uint16_t hexStrtoint(uint8_t *str, uint8_t length)
+{
+	uint16_t num = 0;
+	uint8_t i=0;
+
+	for (i = 0; i<length; i++)
+	{
+		if (str[i]>='0' && str[i]<='9')
+		{
+			num = num * 16 + str[i] - '0';  // Converts String to integer
+		}
+
+		else if (str[i]>='a' && str[i]<='f')
+		{
+			num = num * 16 + str[i] - 'a' + 10;  // Converts String to integer
+		}
+
+		else if (str[i]>='A' && str[i]<='F')
+		{
+			num = num * 16 + str[i] - 'A' + 10;  // Converts String to integer
+		}
+
+		else
+		{
+			return -1;
+		}
+	}
+	return num;
+}
+
+ void send_code_packet(){
+	 set_rgb(255,0,0);
+	 uint8_t length = strlen(data_pointer);
+
+	 ir_send(ALL_DIRS,data_pointer,length);
+	 //if (counterForTransmit%32 == 0 && counterForTransmit > 0)
+	 //{
+	 //set_rgb(0,255,0);
+	 //delay_ms(2000);
+	 //}
+	 waitForTransmission(ALL_DIRS);
+	 printf("Done\r\n");
+	 set_rgb(0,0,0);
+ }
+
 
 int main()
 {
 	init_all_systems();
-	init();
+	init_wrapper();
+	
+	// These are the variables that are being used for parsing the input string
+	
+	addCounter = 0;
+	flashBufferPos = 0;
+	pageTowrite = 1;
+	//init_flash_write();
 	while(1)
 	{
-		loop();
+		if(!reprogramming) loop_wrapper();
 		check_messages();
 		if(task_list_check())
 		{
@@ -57,6 +112,81 @@ int main()
 		delay_ms(1);	
 	}
 	return 0;
+}
+
+void loop_wrapper(){
+	loop();
+}
+
+void handle_msg_wrapper(ir_msg* msg_struct){
+	handle_msg(msg_struct);
+}
+
+void init_wrapper(){
+	init();
+}
+
+void handle_reprogramming_msg(ir_msg* msg_struct)
+{
+	// Used for debugging
+	msg_struct->msg[msg_struct->length] = '\0';
+	printf("%s\n\r",msg_struct->msg);
+	set_rgb(50,50,50);
+	
+	// converting to integer
+	uint8_t transmitLength = msg_struct->length/2;//  strlen(msg_struct->msg)/2;
+	uint8_t lengthCommand = msg_struct->length; // strlen(msg_struct->msg);
+	
+	
+	char str[3];
+	//bzero(str, sizeof(str));	// Finding the length of the data in the message
+	memset(str,0,sizeof(str));
+	str[0] = msg_struct->msg[0];
+	str[1] = msg_struct->msg[1];
+	str[2] = '\0';
+	uint8_t lengthData = strtoul(str, NULL, 16);
+	//uint8_t lengthData = hexStrtoint(str, 2);
+	char strforAddr[5];
+	// Finding the address
+	strforAddr[0] = msg_struct->msg[2];
+	strforAddr[1] = msg_struct->msg[3];
+	strforAddr[2] = msg_struct->msg[4];
+	strforAddr[3] = msg_struct->msg[5];
+	strforAddr[4] = '\0';
+	
+	Startaddr[addCounter] =  strtoul(strforAddr, NULL, 16);
+	//Startaddr[addCounter] = hexStrtoint(Startaddr, 2);
+	printf("corresponding address %u\n\r", Startaddr[addCounter]);
+	addCounter = addCounter + 1;
+	printf("add counter %hu \n\r", addCounter);
+
+	for(uint8_t i=6;i<lengthCommand-2;i+=2)    // 0-5 are length and address, the last two char (1 byte) is for checksum
+	{
+		//convert pair of chars to byte.
+		str[0] = msg_struct->msg[i];
+		str[1] = msg_struct->msg[i+1];
+
+		FlashBuffer[flashBufferPos] = strtoul(str, NULL, 16);
+		//FlashBuffer[flashBufferPos] = hexStrtoint(str, 2);
+		flashBufferPos = flashBufferPos + 1;
+		// Converting string to hex value is done successfully
+	}
+	
+	// Writing it onto flash
+	// Used for checking contents of the Flash buffer
+	if (addCounter%32 == 0 && addCounter>0)
+	{
+
+		addCounter = 0;
+		flashBufferPos = 0;
+		writeRead(FlashBuffer, 254);
+		delay_ms(1000);
+		writeRead(FlashBuffer, 255);
+
+		pageTowrite++;       // Incrementing the address to write into next page
+	}
+	
+	set_rgb(0,0,0);
 }
 
 void check_messages ()
@@ -99,8 +229,12 @@ void check_messages ()
 		msg_struct->msg[msg_node[i].msg_length]	= '\0';		
 		num_waiting_msgs--;
 
-
-		handle_msg(msg_struct);
+		if(!reprogramming){
+			handle_msg_wrapper(msg_struct);
+		}else{
+			handle_reprogramming_msg(msg_struct);
+		}
+		
 	}
 }
 

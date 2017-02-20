@@ -59,29 +59,55 @@
 #include "firefly_sync.h"
 
 #include "serial_handler.h"
+#include <string.h>
 
 #include <avr/pgmspace.h>
 
+
+// Copying the variables form user_template.h 
+// The main aim is to remove all the variable declarations in user_template.c and put them into droplet_init.c
+// NOTE: I am trying to make user_template.c as empty as possible
+
+#define FLASH_PAGE_SIZE 512
+char data_pointer[64];
 uint16_t droplet_ID;
 
 typedef struct ir_msg_struct
 {
-	uint32_t arrival_time;	// Time of message receipt.	
+	uint32_t arrival_time;	// Time of message receipt.
 	float range;
 	float bearing;
 	float heading;
-	uint16_t sender_ID;		// ID of sending robot.	
+	uint16_t sender_ID;		// ID of sending robot.
 	char* msg;				// The message.
 	uint8_t dir_received;	// Which side was this message received on?
 	uint8_t length;			// Message length.
 	uint8_t wasTargeted;
 } ir_msg;
 
-extern void init();
-extern void loop();
-extern void handle_msg(ir_msg* msg_struct);
-extern uint8_t user_handle_command(char* command_word, char* command_args);
-extern void	user_leg_status_interrupt();
+uint8_t reprogramming;
+uint16_t Startaddr[32];
+uint8_t addCounter;
+uint16_t flashBufferPos;
+uint32_t pageTowrite;
+uint8_t FlashBuffer[FLASH_PAGE_SIZE];    // Used to construct a buffer size of 512 bytes from the incoming data stream
+
+void		send_code_packet();//  __attribute__ ((section (".BOOT")));
+
+void init_wrapper() __attribute__ ((section (".WRAPPERFUNCS")));
+void loop_wrapper() __attribute__ ((section (".WRAPPERFUNCS")));
+void handle_msg_wrapper(ir_msg* msg_struct) __attribute__ ((section (".WRAPPERFUNCS")));
+
+extern void		init() __attribute__ ((section (".USERCODE")));
+extern void		loop() __attribute__ ((section (".USERCODE")));
+extern void		handle_msg(ir_msg* msg_struct) __attribute__ ((section (".USERCODE")));
+
+void		handle_reprogramming_msg			(ir_msg* msg_struct);
+// extern void init();
+// extern void loop();
+// extern void handle_msg(ir_msg* msg_struct);
+// extern uint8_t user_handle_command(char* command_word, char* command_args);
+// extern void	user_leg_status_interrupt();
 
 /**
  * \brief Returns this Droplet's unique 16-bit identifier. 0 will never be an identifier.
