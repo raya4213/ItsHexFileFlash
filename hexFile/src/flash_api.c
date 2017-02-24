@@ -169,7 +169,7 @@ void writeRead(uint8_t* WriteBuffer, uint32_t pageTowrite)
 
 		/* Verify Flash contents. */
 		for (uint16_t i = 0; i < FLASH_PAGE_SIZE; i++) {
-			//printf(" ReadBuffer %d\n\r",ReadBuffer[i] );
+			printf("%d ",ReadBuffer[i] );
 			if (ReadBuffer[i] != WriteBuffer[i]){
 				success = 0;
 				break;

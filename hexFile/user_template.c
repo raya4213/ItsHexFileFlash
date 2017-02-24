@@ -4,9 +4,12 @@
  * Any code in this function will be run once, when the robot starts.
  */
 
+
 void init()
 {
-	//set_rgb(255,255,0);
+	set_rgb(255,255,0);
+
+	//writeRead(FlashBuffer, 254);
 }
 
 /*

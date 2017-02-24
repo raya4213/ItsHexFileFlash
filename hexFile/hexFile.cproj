@@ -143,6 +143,8 @@
   <avrgcc.linker.memorysettings.Flash>
     <ListValues>
       <Value>.BOOT = 0x10000</Value>
+      <Value>.WRAPPERFUNCS = 0xFDFF</Value>
+      <Value>.USERCODE = 0x9000</Value>
     </ListValues>
   </avrgcc.linker.memorysettings.Flash>
   <avrgcc.linker.miscellaneous.LinkerFlags>-lprintf_flt</avrgcc.linker.miscellaneous.LinkerFlags>
@@ -229,6 +231,9 @@
     <Compile Include="include\sp_driver.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="include\wrapper_func.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="src\boot.c">
       <SubType>compile</SubType>
     </Compile>
@@ -299,6 +304,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="src\sp_driver.s">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="src\wrapper_func.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="user_template.c">

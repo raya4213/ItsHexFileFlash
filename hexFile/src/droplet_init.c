@@ -92,8 +92,21 @@ uint16_t hexStrtoint(uint8_t *str, uint8_t length)
 int main()
 {
 	init_all_systems();
-	init_wrapper();
-	
+	//init_wrapper();
+	init();
+	//memset(FlashBuffer,55, 64);
+	//bzero(FlashBuffer,sizeof(FlashBuffer));
+		//ReadFlashPage(FlashBuffer, 256);
+		//printf("Hello world");
+		//printf("%s", FlashBuffer);
+		int i =0;
+		for (i=0;i<512;i++)
+		{
+			//printf("%d ", FlashBuffer[i]);
+			FlashBuffer[i] = 55;
+		}
+		writeRead(FlashBuffer,250);
+		delay_ms(5000);
 	// These are the variables that are being used for parsing the input string
 	
 	addCounter = 0;
@@ -102,7 +115,8 @@ int main()
 	//init_flash_write();
 	while(1)
 	{
-		if(!reprogramming) loop_wrapper();
+		//if(!reprogramming) loop_wrapper();
+		if(!reprogramming) loop();
 		check_messages();
 		if(task_list_check())
 		{
@@ -114,17 +128,7 @@ int main()
 	return 0;
 }
 
-void loop_wrapper(){
-	loop();
-}
 
-void handle_msg_wrapper(ir_msg* msg_struct){
-	handle_msg(msg_struct);
-}
-
-void init_wrapper(){
-	init();
-}
 
 void handle_reprogramming_msg(ir_msg* msg_struct)
 {
@@ -230,7 +234,8 @@ void check_messages ()
 		num_waiting_msgs--;
 
 		if(!reprogramming){
-			handle_msg_wrapper(msg_struct);
+			//handle_msg_wrapper(msg_struct);
+			handle_msg(msg_struct);
 		}else{
 			handle_reprogramming_msg(msg_struct);
 		}

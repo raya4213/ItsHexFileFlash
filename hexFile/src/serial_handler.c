@@ -38,11 +38,13 @@ void handle_serial_command(char* command, uint16_t command_length){
 		else if(strcmp_P(command_word,PSTR("r_start"))==0)	reprogramming = 1;
 		else if(strcmp_P(command_word,PSTR("r_end"))==0){
 			reprogramming = 0;
-			droplet_reboot();
+			//droplet_reboot();
 		}else if(strcmp_P(command_word,PSTR("reprog_begin"))==0){
-			//delay_ms(1000);
+			delay_ms(1000);
 			ir_cmd(ALL_DIRS, "r_start", 7);
-		}else if(strcmp_P(command_word,PSTR("reprog_end"))==0){\
+		}else if(strcmp_P(command_word,PSTR("reprog_end"))==0){
+			delay_ms(1000);
+			printf("Coming into this loop\n\r");
 			ir_cmd(ALL_DIRS, "r_end", 5);	
 		}else if(command_word[0]=='!' && command_word[1]==0)
 		{

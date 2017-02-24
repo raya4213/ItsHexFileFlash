@@ -57,6 +57,7 @@
 #include "motor.h"
 #include "random.h"
 #include "firefly_sync.h"
+#include "wrapper_func.h"
 
 #include "serial_handler.h"
 #include <string.h>
@@ -72,18 +73,18 @@
 char data_pointer[64];
 uint16_t droplet_ID;
 
-typedef struct ir_msg_struct
-{
-	uint32_t arrival_time;	// Time of message receipt.
-	float range;
-	float bearing;
-	float heading;
-	uint16_t sender_ID;		// ID of sending robot.
-	char* msg;				// The message.
-	uint8_t dir_received;	// Which side was this message received on?
-	uint8_t length;			// Message length.
-	uint8_t wasTargeted;
-} ir_msg;
+// typedef struct ir_msg_struct
+// {
+// 	uint32_t arrival_time;	// Time of message receipt.
+// 	float range;
+// 	float bearing;
+// 	float heading;
+// 	uint16_t sender_ID;		// ID of sending robot.
+// 	char* msg;				// The message.
+// 	uint8_t dir_received;	// Which side was this message received on?
+// 	uint8_t length;			// Message length.
+// 	uint8_t wasTargeted;
+// } ir_msg;
 
 uint8_t reprogramming;
 uint16_t Startaddr[32];
@@ -94,15 +95,18 @@ uint8_t FlashBuffer[FLASH_PAGE_SIZE];    // Used to construct a buffer size of 5
 
 void		send_code_packet();//  __attribute__ ((section (".BOOT")));
 
-void init_wrapper() __attribute__ ((section (".WRAPPERFUNCS")));
-void loop_wrapper() __attribute__ ((section (".WRAPPERFUNCS")));
-void handle_msg_wrapper(ir_msg* msg_struct) __attribute__ ((section (".WRAPPERFUNCS")));
 
-extern void		init() __attribute__ ((section (".USERCODE")));
-extern void		loop() __attribute__ ((section (".USERCODE")));
-extern void		handle_msg(ir_msg* msg_struct) __attribute__ ((section (".USERCODE")));
+extern void		init() __attribute__ ((section (".WRAPPERFUNCS")));
+extern void		loop() __attribute__ ((section (".WRAPPERFUNCS")));
+extern void		handle_msg(ir_msg* msg_struct) __attribute__ ((section (".WRAPPERFUNCS")));
 
 void		handle_reprogramming_msg			(ir_msg* msg_struct);
+
+// extern void init_wrapper() __attribute__ ((section (".WRAPPERFUNCS ")));
+// extern void loop_wrapper() __attribute__ ((section (".WRAPPERFUNCS ")));
+// extern void handle_msg_wrapper(ir_msg* msg_struct) __attribute__ ((section (".WRAPPERFUNCS ")));
+
+
 // extern void init();
 // extern void loop();
 // extern void handle_msg(ir_msg* msg_struct);
