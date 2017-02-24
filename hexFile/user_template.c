@@ -7,8 +7,7 @@
 
 void init()
 {
-	set_rgb(255,255,0);
-
+	set_rgb(255,0,0);
 	//writeRead(FlashBuffer, 254);
 }
 

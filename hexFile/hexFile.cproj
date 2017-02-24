@@ -39,7 +39,7 @@
       </framework-data>
     </AsfFrameworkConfig>
     <avrtool>com.atmel.avrdbg.tool.atmelice</avrtool>
-    <avrtoolserialnumber>J41800040511</avrtoolserialnumber>
+    <avrtoolserialnumber>J41800024439</avrtoolserialnumber>
     <avrdeviceexpectedsignature>0x1E9742</avrdeviceexpectedsignature>
     <com_atmel_avrdbg_tool_atmelice>
       <ToolOptions>
@@ -49,7 +49,7 @@
         <InterfaceName>PDI</InterfaceName>
       </ToolOptions>
       <ToolType>com.atmel.avrdbg.tool.atmelice</ToolType>
-      <ToolNumber>J41800040511</ToolNumber>
+      <ToolNumber>J41800024439</ToolNumber>
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>PDI</avrtoolinterface>
@@ -143,7 +143,7 @@
   <avrgcc.linker.memorysettings.Flash>
     <ListValues>
       <Value>.BOOT = 0x10000</Value>
-      <Value>.WRAPPERFUNCS = 0xFDFF</Value>
+      <Value>.WRAPPERFUNCS = 0x5A00</Value>
       <Value>.USERCODE = 0x9000</Value>
     </ListValues>
   </avrgcc.linker.memorysettings.Flash>

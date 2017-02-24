@@ -9,7 +9,7 @@ void handle_serial_command(char* command, uint16_t command_length){
 		char command_args[BUFFER_SIZE];
 		get_command_word_and_args(command,command_length,command_word,command_args);
 			 if(strcmp_P(command_word,PSTR("move_steps"))==0)			handle_move_steps(command_args);
-		//else if(strcmp_P(command_word,PSTR("0"))==0)                    set_rgb(0,0,255);
+		//else if(strcmp_P(command_word,PSTR("0"))==0)                     set_rgb(0,0,255);
 		//else if(strcmp_P(command_word,PSTR("0")))						set_rgb(0,0,255);
 		else if(strcmp_P(command_word,PSTR("walk"))==0)					handle_walk(command_args);
 		else if(strcmp_P(command_word,PSTR("get_rgb"))==0)				handle_get_rgb();
