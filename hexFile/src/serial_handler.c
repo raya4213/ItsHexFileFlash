@@ -31,6 +31,7 @@ void handle_serial_command(char* command, uint16_t command_length){
 		else if(strcmp_P(command_word,PSTR("tasks"))==0)				print_task_queue();
 		else if(strcmp_P(command_word,PSTR("reset"))==0)				handle_reset();
 		else if(strcmp_P(command_word,PSTR("write_motor_settings"))==0)	write_motor_settings();
+		else if(strcmp_P(command_word,PSTR("reprog_test"))==0)	schedule_task(5, handle_reprog_test, NULL);
 		else if(strcmp_P(command_word,PSTR("print_motor_settings"))==0){
 																		print_motor_values();
 																		print_dist_per_step();																	
@@ -54,6 +55,58 @@ void handle_serial_command(char* command, uint16_t command_length){
 		else if(!user_handle_command_wrapper(command_word, command_args))	printf_P(CMD_NOT_RECOGNIZED_STR,command_word);
 		else														printf_P(CMD_NOT_RECOGNIZED_STR,command_word);
 	}
+}
+
+void handle_reprog_test(){
+	uint8_t dummyBuff[512];
+	//40E06FEF8FEF0E948237089508950895
+	dummyBuff[0] = 0x40;
+	dummyBuff[1] = 0xe0;
+	dummyBuff[2] = 0x6f;
+	dummyBuff[3] = 0xef;
+	dummyBuff[4] = 0x8f;
+	dummyBuff[5] = 0xef;
+	dummyBuff[6] = 0x0e;
+	dummyBuff[7] = 0x94;
+	dummyBuff[8] = 0x82;
+	dummyBuff[9] = 0x37;
+	dummyBuff[10] = 0x08;
+	dummyBuff[11] = 0x95;
+	dummyBuff[12] = 0x08;
+	dummyBuff[13] = 0x95;
+	dummyBuff[14] = 0x08;
+	dummyBuff[15] = 0x95;
+	for(int i=16;i<512;i++)
+	{
+		dummyBuff[i] = 0xff;
+	}
+	//dummyBuff[0] = ;
+	writeRead(dummyBuff, 90);
+		
+	// 	for (int j=87;j<91;j++)
+	// 	{
+	// 		printf("\nValue of Pagenumber %d\n",j);
+	//ReadFlashPage(ReadBuffer,90);
+	//for (int i=0; i<FLASH_PAGE_SIZE; i++)
+	//{
+		//printf("%02x",ReadBuffer[i]);
+	//}
+	droplet_reboot();
+	// 	}
+	//memset(FlashBuffer,55, 64);
+	//bzero(FlashBuffer,sizeof(FlashBuffer));
+	//ReadFlashPage(FlashBuffer, 256);
+	//printf("Hello world");
+	//printf("%s", FlashBuffer);
+	// 		int i =0;
+	// 		for (i=0;i<512;i++)
+	// 		{
+	// 			//printf("%d ", FlashBuffer[i]);
+	// 			FlashBuffer[i] = 55;
+	// 		}
+	// 		writeRead(FlashBuffer,250);
+	// 		delay_ms(5000	// These are the variables that are being used for parsing the input string
+		
 }
 
 uint8_t user_handle_command_wrapper(char* command_word, char* command_args){

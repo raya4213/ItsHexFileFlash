@@ -69,7 +69,6 @@
 // The main aim is to remove all the variable declarations in user_template.c and put them into droplet_init.c
 // NOTE: I am trying to make user_template.c as empty as possible
 
-#define FLASH_PAGE_SIZE 512
 char data_pointer[64];
 uint16_t droplet_ID;
 
@@ -86,6 +85,7 @@ uint16_t droplet_ID;
 // 	uint8_t wasTargeted;
 // } ir_msg;
 
+#define FLASH_PAGE_SIZE 512UL
 uint8_t reprogramming;
 uint16_t Startaddr[32];
 uint8_t addCounter;

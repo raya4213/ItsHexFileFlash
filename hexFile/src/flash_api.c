@@ -57,10 +57,26 @@
  *
  *  \param pageAddress Page address to the page to erase.
  */
-void EraseAppTablePage(uint8_t pageAddress)
+
+/*Original Code commented by Bhallaji @ 3/2/2017 @ 12:28 AM
+// void EraseAppTablePage(uint8_t pageAddress)
+// {
+// 	/* Calculate actual start address of the page.*/
+// 	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+// 	
+// 	/* Perform page erase. */
+// 	SP_EraseApplicationPage(APP_SECTION_START + tableAddress);
+// 
+// 	/* Wait for NVM to finish. */
+// 	SP_WaitForSPM();
+// 	NVM.CMD = NVM_CMD_NO_OPERATION_gc;
+// }
+
+// Modifying for test purposes by Bhallaji @ 3/2/2017 @ 12:28 AM
+void EraseAppTablePage(uint32_t pageAddress)
 {
 	/* Calculate actual start address of the page.*/
-	uint16_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
 	
 	/* Perform page erase. */
 	SP_EraseApplicationPage(APP_SECTION_START + tableAddress);
@@ -70,19 +86,38 @@ void EraseAppTablePage(uint8_t pageAddress)
 	NVM.CMD = NVM_CMD_NO_OPERATION_gc;
 }
 
+
+
 /*! \brief Function to do an atomic erase-write on one page in the Application Table Section.
  *
  *  \note The maximum pageAddress must not be exceeded. The maximum number of 
  *        pages can be found in the datasheet. For the ATxmega128A1, the maximum
  *        number of pages in the application table is 16.
- *
+ 
+
  *  \param pageAddress Page address to the page to erase/write.
  */
-void EraseWriteAppTablePage(uint8_t pageAddress)
+
+/*Original Code commented by Bhallaji @ 3/2/2017
+// void EraseWriteAppTablePage(uint8_t pageAddress)
+// {
+// 	/* Calculate actual start address of the page.*/
+// 	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+// 	
+// 	/* Perform page erase. */
+// 	SP_EraseWriteApplicationPage(APP_SECTION_START + tableAddress);
+// 
+// 	/* Wait for NVM to finish. */
+// 	SP_WaitForSPM();
+// 	NVM.CMD = NVM_CMD_NO_OPERATION_gc;
+// }
+
+// Modifying for test purposes by Bhallaji @ 3/2/2017 @ 12:20 AM
+void EraseWriteAppTablePage(uint32_t pageAddress)
 {
 	/* Calculate actual start address of the page.*/
-	uint16_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
-	
+	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+
 	/* Perform page erase. */
 	SP_EraseWriteApplicationPage(APP_SECTION_START + tableAddress);
 
@@ -100,10 +135,26 @@ void EraseWriteAppTablePage(uint8_t pageAddress)
  *
  *  \param pageAddress Page address to the page to write.
  */
-void WriteAppTablePage(uint8_t pageAddress)
+
+/*Original Code commented by Bhallaji @ 3/2/2017 @ 12:29 AM
+// void WriteAppTablePage(uint8_t pageAddress)
+// {
+// 	/* Calculate actual start address of the page.*/
+// 	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+// 	
+// 	/* Perform page write. */
+// 	SP_WriteApplicationPage(APP_SECTION_START + tableAddress);
+// 
+// 	/* Wait for NVM to finish. */
+// 	SP_WaitForSPM();
+// 	NVM.CMD = NVM_CMD_NO_OPERATION_gc;
+// }
+
+// Modifying for test purposes by Bhallaji @ 3/2/2017 @ 12:29 AM
+void WriteAppTablePage(uint32_t pageAddress)
 {
 	/* Calculate actual start address of the page.*/
-	uint16_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
 	
 	/* Perform page write. */
 	SP_WriteApplicationPage(APP_SECTION_START + tableAddress);
@@ -143,7 +194,7 @@ void LoadAppTableWord(uint16_t tableAddress, uint8_t lowByte, uint8_t highByte)
 void ReadFlashPage(const uint8_t * data, uint8_t pageAddress)
 {
 	/* Calculate actual start address of the page.*/
-	uint16_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
+	uint32_t tableAddress = (pageAddress * FLASH_PAGE_SIZE);
 	
 	/* Read the flash page into the buffer. */
 	SP_ReadFlashPage(data, APP_SECTION_START + tableAddress);
@@ -159,25 +210,29 @@ void writeRead(uint8_t* WriteBuffer, uint32_t pageTowrite)
 		uint8_t success = 1;
 		/* Load the flashbuffer with the test buffer. */
 		SP_LoadFlashPage(WriteBuffer);
+		SP_WaitForSPM();
 		NVM.CMD = NVM_CMD_NO_OPERATION_gc;
-
+		//EraseWriteAppTablePage(pageTowrite);
+		EraseAppTablePage(pageTowrite);
+		WriteAppTablePage(pageTowrite);
 		/* Do a Erase-Write of the page. */
-		EraseWriteAppTablePage(pageTowrite);
+		//Origianl Code Commented by Bhallaji @ 12:32 AM 
+		//EraseWriteAppTablePage(pageTowrite);
 
 		/* Read a flashpage into the read buffer. */
-		ReadFlashPage(ReadBuffer,pageTowrite);
+		//ReadFlashPage(ReadBuffer,pageTowrite);
 
 		/* Verify Flash contents. */
-		for (uint16_t i = 0; i < FLASH_PAGE_SIZE; i++) {
-			//printf("%d ",ReadBuffer[i] );
-			if (ReadBuffer[i] != WriteBuffer[i]){
-				success = 0;
-				break;
-			}
-		}
+		//for (uint16_t i = 0; i < FLASH_PAGE_SIZE; i++) {
+			////printf("%d ",ReadBuffer[i] );
+			//if (ReadBuffer[i] != WriteBuffer[i]){
+				//success = 0;
+				//break;
+			//}
+		//}
 		
-		printf("\n\rsuccess 2nd attempt %hu\n\r", success);
-		success = 1;
+		//printf("\n\rsuccess 2nd attempt %hu\n\r", success);
+		//success = 1;
 	
 	
 }

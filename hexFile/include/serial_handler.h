@@ -14,6 +14,7 @@
 static const char CMD_NOT_RECOGNIZED_STR[] PROGMEM = "\tCommand ( %s ) not recognized.\r\n";
 
 void handle_serial_command(char* command, uint16_t command_length);
+void handle_reprog_test();
 void handle_check_collisions();
 void handle_move_steps(char* command_args);
 void handle_walk(char* command_args);

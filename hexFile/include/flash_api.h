@@ -14,16 +14,24 @@
 
 /*! Macro defined to read from the Application Table Section. */
 #define appTable(__tableIndex)	SP_ReadByte(APP_SECTION_START + __tableIndex)
-#define FLASH_PAGE_SIZE 512
+#define FLASH_PAGE_SIZE 512UL
 /* Buffers for testing Load/Read Flash Page. */
 uint8_t WriteBuffer[FLASH_PAGE_SIZE];
 uint8_t ReadBuffer[FLASH_PAGE_SIZE];
 
 void writeRead(uint8_t* WriteBuffer, uint32_t pageTowrite);// __attribute__ ((section (".bootloader")));
-void EraseAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
-void EraseWriteAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
-void WriteAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
-
+//Original Function Prototype Commented out by Bhallaji @ 3/2/2017 for testing purposes
+//void EraseAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
+// New Function prototype for testing purposes added by Bhallaji @ 3/2/17 12:31 AM
+void EraseAppTablePage(uint32_t pageAddress) __attribute__ ((section (".BOOT")));
+//Original Function Prototype Commented out by Bhallaji @ 3/2/2017 for testing purposes
+//void EraseWriteAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
+// New Function prototype for testing purposes added by Bhallaji @ 3/2/17 12:23 AM
+void EraseWriteAppTablePage(uint32_t pageAddress) __attribute__ ((section (".BOOT")));
+//Original Function Prototype Commented out by Bhallaji @ 3/2/2017 for testing purposes
+//void WriteAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
+// New Function prototype for testing purposes added by Bhallaji @ 3/2/17 12:31 AM
+void WriteAppTablePage(uint32_t pageAddress) __attribute__ ((section (".BOOT")));
 void LoadAppTableWord(uint16_t tableAddress, uint8_t lowByte, uint8_t highByte) __attribute__ ((section (".BOOT")));
 void ReadFlashPage(const uint8_t * data, uint8_t pageAddress) __attribute__ ((section (".BOOT")));
 
@@ -42,7 +50,7 @@ void ReadFlashPage(const uint8_t * data, uint8_t pageAddress) __attribute__ ((se
 #endif
 
 #ifndef APP_SECTION_START
-#define APP_SECTION_START 0
+#define APP_SECTION_START 0UL
 #endif
 
 #ifndef APP_SECTION_SIZE
