@@ -168,9 +168,9 @@ void handle_reprogramming_msg(ir_msg* msg_struct)
 
 		addCounter = 0;
 		flashBufferPos = 0;
-		writeRead(FlashBuffer, 254);
-		delay_ms(1000);
-		writeRead(FlashBuffer, 255);
+		//writeRead(FlashBuffer, 254);
+		//delay_ms(1000);
+		//writeRead(FlashBuffer, 255);
 
 		pageTowrite++;       // Incrementing the address to write into next page
 	}

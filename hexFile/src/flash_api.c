@@ -207,14 +207,26 @@ void ReadFlashPage(const uint8_t * data, uint8_t pageAddress)
 
 void writeRead(uint8_t* WriteBuffer, uint32_t pageTowrite) 
 {
+		
 		uint8_t success = 1;
+		/* Load the flashbuffer with the test buffer. */
+		
+		uint8_t dummyBuffer[512];
+		for(uint16_t i=0;i<512;i++)
+		{
+			dummyBuffer[i] = 0xFF;
+		}
+// 		SP_LoadFlashPage(dummyBuffer);
+// 		SP_WaitForSPM();
+// 		NVM.CMD = NVM_CMD_NO_OPERATION_gc;
+// 		WriteAppTablePage(pageTowrite);
 		/* Load the flashbuffer with the test buffer. */
 		SP_LoadFlashPage(WriteBuffer);
 		SP_WaitForSPM();
 		NVM.CMD = NVM_CMD_NO_OPERATION_gc;
-		//EraseWriteAppTablePage(pageTowrite);
-		EraseAppTablePage(pageTowrite);
-		WriteAppTablePage(pageTowrite);
+		EraseWriteAppTablePage(pageTowrite);
+		//EraseAppTablePage(pageTowrite);
+		//WriteAppTablePage(pageTowrite);
 		/* Do a Erase-Write of the page. */
 		//Origianl Code Commented by Bhallaji @ 12:32 AM 
 		//EraseWriteAppTablePage(pageTowrite);
