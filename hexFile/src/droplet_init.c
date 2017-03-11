@@ -2,8 +2,7 @@
 
 uint16_t droplet_ID = 0;
 
-void init_all_systems()
-{
+void init_all_systems(){
 	cli();
 	Config32MHzClock();
 	

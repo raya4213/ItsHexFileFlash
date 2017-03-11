@@ -3,23 +3,29 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "pc_comm.h"
-
+//#include "sleep.h"
+#include <avr/sleep.h>
 #ifdef __AVR_XMEGA__
 #include "sp_driver.h"
 #else // __AVR_XMEGA__
 #include <avr/boot.h>
 #endif // __AVR_XMEGA__
 
+#ifndef FLASH_PAGE_SIZE
+#define FLASH_PAGE_SIZE 512UL
+#endif
 //#include "xboot.h"
+
+#define FLASH_PAGE_SIZE 512UL
 
 /*! Macro defined to read from the Application Table Section. */
 #define appTable(__tableIndex)	SP_ReadByte(APP_SECTION_START + __tableIndex)
-#define FLASH_PAGE_SIZE 512UL
+
 /* Buffers for testing Load/Read Flash Page. */
 uint8_t WriteBuffer[FLASH_PAGE_SIZE];
 uint8_t ReadBuffer[FLASH_PAGE_SIZE];
 
-void writeRead(uint8_t* WriteBuffer, uint32_t pageTowrite);// __attribute__ ((section (".bootloader")));
+void writeRead(uint8_t* WriteBuffer, uint32_t pageNumber);// __attribute__ ((section (".bootloader")));
 //Original Function Prototype Commented out by Bhallaji @ 3/2/2017 for testing purposes
 //void EraseAppTablePage(uint8_t pageAddress) __attribute__ ((section (".BOOT")));
 // New Function prototype for testing purposes added by Bhallaji @ 3/2/17 12:31 AM

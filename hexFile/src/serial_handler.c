@@ -58,17 +58,18 @@ void handle_serial_command(char* command, uint16_t command_length){
 }
 
 void handle_reprog_test(){
+	//init();
 	uint8_t dummyBuff[512];
-	//40E06FEF8FEF0E948237089508950895
-	dummyBuff[0] = 0x40;
-	dummyBuff[1] = 0xe0;
+	//40E06FEF80E00E941337089508950895
+	dummyBuff[0] = 0x4f;
+	dummyBuff[1] = 0xef;
 	dummyBuff[2] = 0x6f;
 	dummyBuff[3] = 0xef;
 	dummyBuff[4] = 0x8f;
 	dummyBuff[5] = 0xef;
 	dummyBuff[6] = 0x0e;
 	dummyBuff[7] = 0x94;
-	dummyBuff[8] = 0x82;
+	dummyBuff[8] = 0x13;
 	dummyBuff[9] = 0x37;
 	dummyBuff[10] = 0x08;
 	dummyBuff[11] = 0x95;
@@ -80,33 +81,11 @@ void handle_reprog_test(){
 	{
 		dummyBuff[i] = 0xff;
 	}
-	//dummyBuff[0] = ;
+	
 	writeRead(dummyBuff, 90);
 		
-	// 	for (int j=87;j<91;j++)
-	// 	{
-	// 		printf("\nValue of Pagenumber %d\n",j);
-	//ReadFlashPage(ReadBuffer,90);
-	//for (int i=0; i<FLASH_PAGE_SIZE; i++)
-	//{
-		//printf("%02x",ReadBuffer[i]);
-	//}
 	droplet_reboot();
-	// 	}
-	//memset(FlashBuffer,55, 64);
-	//bzero(FlashBuffer,sizeof(FlashBuffer));
-	//ReadFlashPage(FlashBuffer, 256);
-	//printf("Hello world");
-	//printf("%s", FlashBuffer);
-	// 		int i =0;
-	// 		for (i=0;i<512;i++)
-	// 		{
-	// 			//printf("%d ", FlashBuffer[i]);
-	// 			FlashBuffer[i] = 55;
-	// 		}
-	// 		writeRead(FlashBuffer,250);
-	// 		delay_ms(5000	// These are the variables that are being used for parsing the input string
-		
+
 }
 
 uint8_t user_handle_command_wrapper(char* command_word, char* command_args){

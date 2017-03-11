@@ -7,7 +7,7 @@
 
 void init()
 {
-	for(int i=0;i<2;i++);
+	//for(int i=0;i<2;i++);
 	set_rgb(255,0,0);
 	//writeRead(FlashBuffer, 254);
 }
@@ -18,7 +18,7 @@ void init()
 
 void loop()
 {
-	
+
 }
 
 // uint16_t hexStrtoint(uint8_t *str, uint8_t length)
