@@ -110,8 +110,6 @@ void ReadFlashPage(const uint8_t * data, uint8_t pageAddress)
 	NVM.CMD = NVM_CMD_NO_OPERATION_gc;
 }
 
-
-
 /*! \brief Example to show how to read and write to the flash.
  */
 
