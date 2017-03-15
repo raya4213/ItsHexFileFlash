@@ -116,6 +116,7 @@ int main()
 
 void handle_reprogramming_msg(ir_msg* msg_struct)
 {
+	
 	// Used for debugging
 	msg_struct->msg[msg_struct->length] = '\0';
 	printf("%s\n\r",msg_struct->msg);
@@ -125,9 +126,7 @@ void handle_reprogramming_msg(ir_msg* msg_struct)
 	uint8_t transmitLength = msg_struct->length/2;//  strlen(msg_struct->msg)/2;
 	uint8_t lengthCommand = msg_struct->length; // strlen(msg_struct->msg);
 	
-	
 	char str[3];
-	//bzero(str, sizeof(str));	// Finding the length of the data in the message
 	memset(str,0,sizeof(str));
 	str[0] = msg_struct->msg[0];
 	str[1] = msg_struct->msg[1];
@@ -143,11 +142,18 @@ void handle_reprogramming_msg(ir_msg* msg_struct)
 	strforAddr[4] = '\0';
 	
 	Startaddr[addCounter] =  strtoul(strforAddr, NULL, 16);
-	//Startaddr[addCounter] = hexStrtoint(Startaddr, 2);
-	printf("corresponding address %u\n\r", Startaddr[addCounter]);
+	
+	printf("corresponding address %u %d\n\r", Startaddr[addCounter], addCounter);
+	
+	// stores the address of starting of a page
+	if (addCounter == 0)
+		storeAddressOfPageStart = Startaddr[addCounter];
+		
 	addCounter = addCounter + 1;
 	printf("add counter %hu \n\r", addCounter);
-
+	for (uint16_t i=0;i<FLASH_PAGE_SIZE;i++)
+		FlashBuffer[i] = 0xFF;
+		
 	for(uint8_t i=6;i<lengthCommand-2;i+=2)    // 0-5 are length and address, the last two char (1 byte) is for checksum
 	{
 		//convert pair of chars to byte.
@@ -155,8 +161,8 @@ void handle_reprogramming_msg(ir_msg* msg_struct)
 		str[1] = msg_struct->msg[i+1];
 
 		FlashBuffer[flashBufferPos] = strtoul(str, NULL, 16);
-		//FlashBuffer[flashBufferPos] = hexStrtoint(str, 2);
 		flashBufferPos = flashBufferPos + 1;
+		
 		// Converting string to hex value is done successfully
 	}
 	
@@ -167,11 +173,9 @@ void handle_reprogramming_msg(ir_msg* msg_struct)
 
 		addCounter = 0;
 		flashBufferPos = 0;
-		//writeRead(FlashBuffer, 254);
-		//delay_ms(1000);
-		//writeRead(FlashBuffer, 255);
-
-		pageTowrite++;       // Incrementing the address to write into next page
+		pageTowrite = calculate_page_number(storeAddressOfPageStart);
+		writeRead(FlashBuffer, pageTowrite);
+		//pageTowrite++;       // Incrementing the address to write into next page
 	}
 	
 	set_rgb(0,0,0);

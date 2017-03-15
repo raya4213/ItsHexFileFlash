@@ -2,6 +2,7 @@
 
 uint8_t user_handle_command(char* command_word, char* command_args) __attribute__((weak));
 uint8_t user_handle_command_wrapper(char* command_word, char* command_args) __attribute__((section(".WRAPPERFUNCS")));
+uint8_t calculate_page_number(uint16_t addressFrmProgramming);
 
 void handle_serial_command(char* command, uint16_t command_length){
 	if(command[0]!='\0'){ //Not much to handle if we get an empty string.
@@ -9,8 +10,6 @@ void handle_serial_command(char* command, uint16_t command_length){
 		char command_args[BUFFER_SIZE];
 		get_command_word_and_args(command,command_length,command_word,command_args);
 			 if(strcmp_P(command_word,PSTR("move_steps"))==0)			handle_move_steps(command_args);
-		//else if(strcmp_P(command_word,PSTR("0"))==0)                     set_rgb(0,0,255);
-		//else if(strcmp_P(command_word,PSTR("0")))						set_rgb(0,0,255);
 		else if(strcmp_P(command_word,PSTR("walk"))==0)					handle_walk(command_args);
 		else if(strcmp_P(command_word,PSTR("get_rgb"))==0)				handle_get_rgb();
 		else if(strcmp_P(command_word,PSTR("set_ir"))==0)				handle_set_ir(command_args);
@@ -36,10 +35,22 @@ void handle_serial_command(char* command, uint16_t command_length){
 																		print_motor_values();
 																		print_dist_per_step();																	
 		}
-		else if(strcmp_P(command_word,PSTR("r_start"))==0)	reprogramming = 1;
+		else if(strcmp_P(command_word,PSTR("r_start"))==0)
+		{
+				reprogramming = 1;
+		}
+		// changing code here by Rahul Yamasani on 3/14/2017
 		else if(strcmp_P(command_word,PSTR("r_end"))==0){
 			reprogramming = 0;
-			//droplet_reboot();
+			uint8_t pageNumber = calculate_page_number(storeAddressOfPageStart);
+			printf("pageNumber %d\n", pageNumber);
+			
+			for(uint16_t i=0;i<FLASH_PAGE_SIZE;i++)
+				printf("%02x ", FlashBuffer[i]);
+			writeRead(FlashBuffer, pageNumber);
+			addCounter = 0;
+			//delay_ms(1000);
+			droplet_reboot();
 		}else if(strcmp_P(command_word,PSTR("reprog_begin"))==0){
 			delay_ms(1000);
 			ir_cmd(ALL_DIRS, "r_start", 7);
@@ -57,6 +68,10 @@ void handle_serial_command(char* command, uint16_t command_length){
 	}
 }
 
+uint8_t calculate_page_number(uint16_t addressFrmProgramming)
+{
+	return addressFrmProgramming/512;
+}
 void handle_reprog_test(){
 	//init();
 	uint8_t dummyBuff[512];
@@ -82,7 +97,7 @@ void handle_reprog_test(){
 		dummyBuff[i] = 0xff;
 	}
 	
-	writeRead(dummyBuff, 90);
+	writeRead(dummyBuff, 92);
 		
 	droplet_reboot();
 

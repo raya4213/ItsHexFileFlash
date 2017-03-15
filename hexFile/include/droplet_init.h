@@ -91,9 +91,10 @@ typedef struct ir_msg_struct
 
 uint8_t reprogramming;
 uint16_t Startaddr[32];
+uint16_t storeAddressOfPageStart;
 uint8_t addCounter;
 uint16_t flashBufferPos;
-uint32_t pageTowrite;
+uint8_t pageTowrite;
 uint8_t FlashBuffer[FLASH_PAGE_SIZE];    // Used to construct a buffer size of 512 bytes from the incoming data stream
 
 void		send_code_packet();//  __attribute__ ((section (".BOOT")));
